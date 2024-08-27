@@ -1,101 +1,104 @@
-// Pages/MyWallet.jsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { collection, getDocs } from 'firebase/firestore';
+import { firestore } from '../firebase';
+import { FaSearch, FaPaperPlane, FaMoneyBillWave } from 'react-icons/fa';
 
-import {  FaPaperPlane, FaSearch, FaMoneyBillWave } from 'react-icons/fa';
+const MyWallet = ({ balance }) => {
+  const [transactions, setTransactions] = useState([]);
 
-const MyWallet = () => {
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        const transactionsCollection = collection(firestore, 'transactions');
+        const querySnapshot = await getDocs(transactionsCollection);
+        
+        const transactionsData = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()  // Ensure this matches your Firestore document structure
+        }));
 
-  
+        setTransactions(transactionsData);
+      } catch (error) {
+        console.error('Error fetching transactions:', error);
+      }
+    };
+
+    fetchTransactions();
+  }, []);
+
   return (
-  
-  
-    <div className='flex flex-col justify-center mb-5 '>
+    <div className='flex flex-col justify-center mb-5'>
       <h1 className='text-black text-lg'>My Wallet</h1>
       <h2>Keep track of your financial plan</h2>
+      
       <div className='flex mt-3'>
-      <div className="bg-white p-6 rounded-lg shadow-md w-1/2 border border-gray-300 ">
-      <p className=" text-black text-lg  mb-4 font-bold">Hi User Name!</p>
-      <p className=" text-black text-lg">Ksh. 130,543</p>
-    </div>
-    <div className="bg-white p-6 rounded-lg shadow-md w-1/4 border border-gray-300">
-      <FaPaperPlane/>
-      <p className=" text-black text-lg  mb-4">Send Money</p>
-    </div>
-    <div className="bg-white p-6 rounded-lg shadow-md w-1/4 border border-gray-300">
-      <FaMoneyBillWave/>
-      <p className=" text-black text-lg  mb-4">Withdraw Cash</p>
-    </div>
-    </div>
-    
-    <div className='w-1/2 mt-2'>
-      <label className='text-black text-lg ml-2 font-bold '>Recent Transactions</label>
-      <input
-            
-            className="border border-gray-400 p-2 rounded-full ml-8 "
+        <div className="bg-white p-6 rounded-lg shadow-md w-1/2 border border-gray-300">
+          <p className="text-black text-lg mb-4 font-bold">Hi Andrew!</p>
+          <p className="text-black text-lg">Ksh. {balance}</p>
+        </div>
+        <div className="bg-white p-6 rounded-lg shadow-md w-1/4 border border-gray-300">
+          <FaPaperPlane className='w-8 h-8 text-purple-700' />
+          <p className="text-black text-lg mb-4">Send Money</p>
+        </div>
+        <div className="bg-white p-6 rounded-lg shadow-md w-1/4 border border-gray-300">
+          <FaMoneyBillWave className='w-8 h-8 text-purple-700' />
+          <p className="text-black text-lg mb-4">Withdraw Cash</p>
+        </div>
+      </div>
+      
+      <div className='w-1/2 mt-2 flex items-center'>
+        <label className='text-black text-lg ml-2 font-bold'>Recent Transactions</label>
+        <div className='flex items-center'>
+          <input
+            className="border border-gray-400 p-2 rounded-full ml-8"
             placeholder="Search"
           />
-          <button className='rounded-full bg-purple-700 w-6 h-6 ml-4 text-white'>
-            <FaSearch/>
+          <button className='rounded-full bg-purple-700 p-2 ml-4 text-white flex items-center justify-center'>
+            <FaSearch className='w-4 h-4' />
           </button>
-          
+        </div>
+      </div>
+      
+      <div className='flex'>
+        <form className='w-full'>
+          <table className='min-w-full divide-y divide-gray-200'>
+            <thead className='bg-gray-50'>
+              <tr>
+                <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+                  Transaction ID
+                </th>
+                <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+                  Account No
+                </th>
+                <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+                  Name
+                </th>
+                <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+                  Date
+                </th>
+                <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+                  Amount
+                </th>
+              </tr>
+            </thead>
+            <tbody className='bg-white divide-y divide-gray-200'>
+              {transactions.map(transaction => (
+                <tr key={transaction.id}>
+                  <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-900'>{transaction.id}</td>
+                  <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-900'>{transaction.accountNo}</td>
+                  <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-900'>{transaction.name}</td>
+                  <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-900'>
+                    {new Date(transaction.timestamp.seconds * 1000).toLocaleDateString()}
+                  </td>
+                  <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-900'>{transaction.amount}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </form>
+      </div>
     </div>
-    
- 
-    
-    <form>
-      <table className='min-w-full divide-y divide-gray-200'>
-        <thead className='bg-gray-50'>
-          <tr>
-            <th className='px-6 py-3 text-left text-xs font-medium text-gray'>
-              Transaction ID
-
-            </th>
-          </tr>
-
-          <tr>
-            <th className='px-6 py-3 text-left text-xs font-medium text-gray'>
-              Name
-
-            </th>
-          </tr>
-
-          <tr>
-            <th className='px-6 py-3 text-left text-xs font-medium text-gray'>
-              Date
-
-            </th>
-          </tr>
-
-          <tr>
-            <th className='px-6 py-3 text-left text-xs font-medium text-gray'>
-              Status
-
-            </th>
-          </tr>
-
-          <tr>
-            <th className='px-6 py-3 text-left text-xs font-medium text-gray'>
-              Amount
-
-            </th>
-          </tr>
-
-        </thead>
-
-      </table>
-    </form>
-    </div>
-
- 
-
-  
-
-  
-  
-  
- 
-    );
-  };
-
+  );
+};
 
 export default MyWallet;
