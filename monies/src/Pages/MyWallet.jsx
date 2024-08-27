@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import { firestore } from '../firebase';
-import { FaSearch, FaPaperPlane, FaMoneyBillWave } from 'react-icons/fa';
+import { FaSearch } from 'react-icons/fa';
+import sendmoneyicon from '../assets/sendmoneyicon.png';
+import withdrawmoneyicon from '../assets/withdrawmoneyicon.png';
 
 const MyWallet = ({ balance }) => {
   const [transactions, setTransactions] = useState([]);
@@ -28,21 +30,26 @@ const MyWallet = ({ balance }) => {
 
   return (
     <div className='flex flex-col justify-center mb-5'>
-      <h1 className='text-black text-lg'>My Wallet</h1>
+      <h1 className='text-black text-lg font-bold'>My Wallet</h1>
       <h2>Keep track of your financial plan</h2>
       
       <div className='flex mt-3'>
         <div className="bg-white p-6 rounded-lg shadow-md w-1/2 border border-gray-300">
-          <p className="text-black text-lg mb-4 font-bold">Hi Andrew!</p>
+          <p className="text-black text-lg mb-4 font-bold">👋Hi Andrew!</p>
           <p className="text-black text-lg">Ksh. {balance}</p>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow-md w-1/4 border border-gray-300">
-          <FaPaperPlane className='w-8 h-8 text-purple-700' />
-          <p className="text-black text-lg mb-4">Send Money</p>
+        <div className="flex flex-col items-center bg-white p-8 rounded-lg shadow-md w-1/4 border border-gray-300">
+          <div className='flex justify-center items-center'>
+            <img src={sendmoneyicon} alt="send money icon" className='w-9 h-9'/>
+          </div>
+          <p className="text-black text-lg ">Send Money</p>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow-md w-1/4 border border-gray-300">
-          <FaMoneyBillWave className='w-8 h-8 text-purple-700' />
-          <p className="text-black text-lg mb-4">Withdraw Cash</p>
+        
+        <div className=" flex flex-col items-center bg-white p-6 rounded-lg shadow-md w-1/4 border border-gray-300">
+          <div className='flex justify-center items-center'>
+            <img src={withdrawmoneyicon} alt="withdraw icon" className='w-8 h-10'/>
+          </div>
+          <p className="text-black text-lg ">Withdraw Cash</p>
         </div>
       </div>
       
@@ -64,7 +71,7 @@ const MyWallet = ({ balance }) => {
           <table className='min-w-full divide-y divide-gray-200'>
             <thead className='bg-gray-50'>
               <tr>
-                <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+                <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-black'>
                   Transaction ID
                 </th>
                 <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { collection, addDoc, doc, setDoc } from 'firebase/firestore';
-import { firestore } from '../firebase'; // Adjust the import based on your Firebase configuration
+import { firestore } from '../firebase'; 
 
 const WithdrawCash = ({ balance, updateBalance }) => {
   const [accountNumber, setAccountNumber] = useState('');
@@ -17,25 +17,26 @@ const WithdrawCash = ({ balance, updateBalance }) => {
   const handleWithdraw = async () => {
     if (accountNumber && amount) {
       const withdrawalAmount = parseFloat(amount);
+      const transactionFee = withdrawalAmount * 0.02; // 2% transaction fee
+      const totalAmount = withdrawalAmount + transactionFee;
 
-      if (withdrawalAmount > balance) {
+      if (totalAmount > balance) {
         alert('Insufficient balance');
         return;
       }
 
-      const newBalance = balance - withdrawalAmount;
+      const newBalance = balance - totalAmount;
+      updateBalance(newBalance);
 
       try {
-        // Update balance in Firestore
-        const userDoc = doc(firestore, 'users', 'yourUserId'); // Replace 'yourUserId' with actual user ID
+        const userDoc = doc(firestore, 'users', 'yourUserId'); 
         await setDoc(userDoc, { balance: newBalance }, { merge: true });
-        updateBalance(newBalance); // Update balance in parent component
 
-        // Save withdrawal details in Firestore
         const withdrawalsRef = collection(firestore, 'withdrawals');
         await addDoc(withdrawalsRef, {
           accountNumber,
           amount: withdrawalAmount,
+          fee: transactionFee,
           timestamp: new Date()
         });
 

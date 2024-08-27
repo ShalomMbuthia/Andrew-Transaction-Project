@@ -9,20 +9,22 @@ import SendMoney from './Pages/SendMoney.jsx';
 import WithdrawCash from './Pages/WithdrawCash.jsx';
 import Settings from './Pages/Settings.jsx';
 import UserName from './Pages/UserName.jsx';
-import { firestore } from './firebase'; // Adjust the import based on your Firebase configuration
+import { firestore } from './firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
+import sendmoneyicons from './assets/sendmoneyicon.png';
+import withdrawmoneyicon from './assets/withdrawmoneyicon.png';
 
 function App() {
   const [sidebarToggle, setSidebarToggle] = useState(false);
-  const [balance, setBalance] = useState(100000);
+  const [balance, setBalance] = useState(500000);
 
   useEffect(() => {
     fetchBalance();
-  }, []); // Fetch balance on initial load
+  }, []);
 
   const fetchBalance = async () => {
     try {
-      const userDoc = doc(firestore, 'users', 'yourUserId'); // Replace 'yourUserId' with actual user ID
+      const userDoc = doc(firestore, 'users', 'yourUserId');
       const userSnapshot = await getDoc(userDoc);
       if (userSnapshot.exists()) {
         setBalance(userSnapshot.data().balance);
@@ -36,7 +38,7 @@ function App() {
 
   const updateBalance = async (newBalance) => {
     try {
-      const userDoc = doc(firestore, 'users', 'yourUserId'); // Replace 'yourUserId' with actual user ID
+      const userDoc = doc(firestore, 'users', 'yourUserId');
       await setDoc(userDoc, { balance: newBalance }, { merge: true });
       setBalance(newBalance);
     } catch (error) {
@@ -50,7 +52,7 @@ function App() {
         <Sidebar sidebarToggle={sidebarToggle} />
         <div className={`flex-1 flex flex-col ${sidebarToggle ? 'ml-0' : 'ml-64'}`}>
           <Navbar sidebarToggle={sidebarToggle} setSidebarToggle={setSidebarToggle} />
-          <div className="flex-1 mt-16 p-4"> {/* Adjusted margin top to ensure space for Navbar */}
+          <div className="flex-1 mt-16 p-4">
             <Routes>
               <Route path="/wallet" element={<MyWallet balance={balance} />} />
               <Route path="/send" element={<SendMoney balance={balance} updateBalance={updateBalance} />} />
